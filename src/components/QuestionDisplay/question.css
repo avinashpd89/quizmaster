@@ -1,0 +1,168 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensures better handling of elements on smaller screens */
+}
+
+.box1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  min-height: 100vh;
+  background-color: #003135;
+}
+
+.question {
+  height: auto;
+  width: 60%;
+  max-width: 60rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2rem;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.displayBox {
+  height: auto;
+  width: 90%;
+  max-width: 50rem;
+  background-color: #01464c;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.displayBox h3 {
+  font-size: 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.displayBox .option {
+  font-size: 1rem;
+  width: 100%; /* Ensure it uses full width */
+  display: flex;
+  flex-direction: column; /* Align options in a column */
+  gap: 0.75rem; /* Space between options */
+  align-items: center; /* Center options horizontally */
+}
+
+.displayBox .option div {
+  display: flex; /* Flexbox for each option */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+  width: 100%; /* Full width for each option */
+}
+
+.timerDisplay {
+  display: flex;               /* Use flexbox for centering */
+  justify-content: center;     /* Center horizontally */
+  align-items: center;         /* Center vertically */
+  margin: 1rem auto;          /* Add some space around the timer */
+}
+
+.timerDisplay p {
+  font-size: 1.4rem;          /* Font size for the timer text */
+  color: white;               /* Make the text white for contrast */
+  background-color: #244855;  /* Background color of the timer */
+  padding: 0.5rem 1rem;       /* Padding for better spacing */
+  border: 5px solid #6791a0;  /* Border color */
+  border-radius: 1rem;        /* Rounded corners */
+  width: fit-content;         /* Adjust width based on content */
+  height: auto;               /* Automatic height based on content */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+}
+
+.navigationButtons {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 50rem;
+  margin: 1rem 0;
+}
+
+.navigationButtons .previous,
+.navigationButtons .next {
+  background: #3c535b;
+  width: 6rem;
+  height: 3rem;
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 17px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.previous:hover,
+.next:hover {
+  background: #388aa5;
+  color: #244855;
+}
+
+.question .submit {
+  background: #3c535b;
+  width: 6rem;
+  height: 3rem;
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 17px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit:hover {
+  background: #6791a0;
+  color: #244855;
+}
+
+
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+  .question {
+    width: 90%; /* Adjust width for smaller screens */
+    padding: 1rem; /* Reduce padding */
+  }
+
+  .displayBox {
+    width: 100%; /* Ensure it uses full width on small screens */
+    padding: 1rem;
+  }
+
+  .navigationButtons {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .navigationButtons .previous,
+  .navigationButtons .next {
+    width: 80%; /* Full width buttons for better tap targets */
+  }
+
+  .question .submit {
+    width: 80%; /* Full width on small screens */
+    margin: 0.5rem 0;
+  }
+
+  .displayBox h3 {
+    font-size: 1rem; /* Reduce font size for smaller screens */
+  }
+
+  .timerDisplay {
+    margin-top: 1rem;         /* Add margin for spacing */
+  }
+
+  .timerDisplay p {
+    font-size: 1.2rem;        /* Slightly smaller font on smaller screens */
+  }
+}

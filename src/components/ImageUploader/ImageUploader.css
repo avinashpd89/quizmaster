@@ -1,0 +1,133 @@
+* {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  box-sizing: border-box; /* Ensures padding and borders are included in element's total width and height */
+}
+
+.image {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  padding: 1rem;
+}
+
+.image input {
+  background-color: #244855;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 2px solid #3c535b;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: white; /* Ensure text is visible on dark background */
+}
+
+.image input:hover {
+  border: 2px solid #6791a0;
+  transition: border-color 0.25s;
+}
+
+.image button {
+  border-radius: 8px;
+  border: 2px solid transparent;
+  padding: 0.5rem;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white; /* Ensure text is visible on dark background */
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #6791a0;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.box {
+  display: flex;
+  height: 35rem;
+  width: 50rem;
+  background: #244855;
+  margin: auto;
+  margin-top: 1rem;
+  border-radius: 1.5rem;
+}
+
+.box p {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-left: 3rem;
+  font-size: 1.5rem;
+  color: white; /* Ensure text is visible */
+}
+
+.box p span {
+  font-weight: 600;
+  margin-left: 10rem;
+}
+
+.box .start {
+  background: #3c535b;
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  width: 6rem;
+  height: 3rem;
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 17px;
+  cursor: pointer;
+  color: white;
+}
+
+.box .start:hover {
+  background: #6791a0;
+  color: #244855;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image {
+    flex-direction: column; /* Stack input and button vertically on smaller screens */
+    align-items: center; /* Center the elements */
+    gap: 1rem; /* Increase gap for better spacing */
+  }
+
+  .box {
+    width: 90%; /* Adjust width for smaller screens */
+    height: auto; /* Allow height to adjust based on content */
+    padding: 1rem; /* Add padding to ensure proper spacing */
+    flex-direction: column; /* Stack content vertically */
+  }
+
+  .box p {
+    font-size: 1.2rem; /* Adjust font size for better readability on smaller screens */
+    margin: 1rem 0; /* Adjust margin for better spacing */
+    text-align: center; /* Center text on smaller screens */
+    margin-left: 0; /* Remove left margin */
+  }
+
+  .box p span {
+    display: block; /* Ensure it stays on a new line */
+    margin-left: 0; /* Remove left margin for better alignment */
+    text-align: center; /* Center text */
+  }
+
+  .box .start {
+    width: 70%; /* Make button wider on smaller screens */
+    height: 2.5rem; /* Adjust height for better fit */
+    position: static; /* Remove absolute positioning */
+    margin: 1rem auto; /* Center the button */
+  }
+}

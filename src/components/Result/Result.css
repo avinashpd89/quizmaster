@@ -1,0 +1,62 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.resultBox {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding: 1rem;
+}
+
+.resultDisplay {
+  display: flex;
+  flex-direction: column; /* Ensure content is aligned vertically */
+  height: auto; /* Adapt height based on content */
+  width: 60rem;
+  max-width: 90%; /* Responsive width */
+  border-radius: 2rem;
+  background-color: #f8f9fa; /* Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  padding: 2rem;
+}
+
+.resultDisplay dl {
+  display: flex;
+  flex-direction: column; /* Stack dt and dd vertically */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2.5rem;
+}
+
+.resultDisplay dt,
+.resultDisplay dd {
+  margin: 0.5rem 0; /* Add spacing between dt and dd */
+  width: 100%; /* Full width for alignment */
+}
+
+.resultDisplay dt {
+  font-weight: bold;
+  color: #333;
+}
+
+.resultDisplay dd {
+  color: #555;
+  margin-bottom: 1rem; /* Add spacing between sets of results */
+}
+
+@media (max-width: 768px) {
+  .resultDisplay {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .resultDisplay dl {
+    font-size: 1.2rem;
+  }
+}
