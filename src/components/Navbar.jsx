@@ -42,7 +42,7 @@ function Navbar() {
         <a href="/">Home</a>
       </li>
       <li>
-        <a href="/upload">Upload File</a>
+        <a href="/upload">Quizly</a>
       </li>
       <li>
         <a href="/contact">Contact</a>

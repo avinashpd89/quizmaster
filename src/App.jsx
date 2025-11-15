@@ -18,10 +18,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
+          {/* <Route
             path="/upload"
             element={authUser ? <Upload /> : <Navigate to="/signup" />}
-          />
+          /> */}
+          <Route path="/upload" element={<Upload />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />

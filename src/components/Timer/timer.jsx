@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "../Timer/timer.css";
 
 const Timer = ({ onComplete }) => {
-  const [time, setTime] = useState(500); // 3600 seconds = 1 hour
+  const [time, setTime] = useState(30); // 3600 seconds = 1 hour
 
   useEffect(() => {
     if (time === 0) {
