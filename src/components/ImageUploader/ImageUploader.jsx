@@ -13,13 +13,13 @@ export default function ImageUploader() {
   const navigate = useNavigate();
 
   // ============================
-  // 🚀 Upload Handler (Frontend Only)
+  // 🚀 Upload Handler
   // ============================
   const handleUpload = async () => {
     setIsLoading(true);
 
-    // Fake delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Artificial 3 sec delay
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // -------- Paragraph Upload --------
     if (uploadType === "paragraph") {
@@ -28,9 +28,29 @@ export default function ImageUploader() {
         return toast.error("Paragraph is empty");
       }
 
-      toast.success("Paragraph accepted!");
-      setParagraph("");
-      setIsUploaded(true);
+      try {
+        const response = await fetch("/api/upload-paragraph", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paragraph }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setIsLoading(false);
+          return toast.error(data.message);
+        }
+
+        toast.success("Paragraph uploaded & saved to DB!");
+
+        // Clear input
+        setParagraph("");
+        setIsUploaded(true);
+      } catch (error) {
+        toast.error("Server error!");
+      }
+
       setIsLoading(false);
       return;
     }
@@ -42,9 +62,29 @@ export default function ImageUploader() {
         return toast.error("URL is empty");
       }
 
-      toast.success("URL accepted!");
-      setUrl("");
-      setIsUploaded(true);
+      try {
+        const response = await fetch("/api/upload-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setIsLoading(false);
+          return toast.error(data.message);
+        }
+
+        toast.success("URL uploaded & saved to DB!");
+
+        // Clear input
+        setUrl("");
+        setIsUploaded(true);
+      } catch (error) {
+        toast.error("Server error!");
+      }
+
       setIsLoading(false);
       return;
     }
@@ -56,9 +96,31 @@ export default function ImageUploader() {
         return toast.error("Please select an image");
       }
 
-      toast.success(`Image selected: ${file.name}`);
-      setFile(null);
-      setIsUploaded(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/api/upload-image", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setIsLoading(false);
+          return toast.error(data.message);
+        }
+
+        toast.success(`Image uploaded: ${data.fileName}`);
+
+        // Clear input
+        setFile(null);
+        setIsUploaded(true);
+      } catch (error) {
+        toast.error("Upload failed!");
+      }
+
       setIsLoading(false);
     }
   };
@@ -92,6 +154,7 @@ export default function ImageUploader() {
 
       {/* Input Section */}
       <div className="w-full max-w-lg bg-white shadow-md rounded-xl p-6 space-y-4">
+
         {uploadType === "paragraph" && (
           <textarea
             className="w-full border rounded-lg p-3 h-32 focus:ring focus:ring-blue-300"
@@ -128,7 +191,14 @@ export default function ImageUploader() {
             isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
-          {isLoading ? "Uploading..." : uploadType === "image" ? "Upload Image" : "Upload"}
+          {isLoading ? (
+            <div className="flex items-center justify-center space-x-2">
+              <span className="loader border-2 border-white border-t-transparent rounded-full w-5 h-5 animate-spin"></span>
+              <span>Uploading...</span>
+            </div>
+          ) : (
+            uploadType === "image" ? "Upload Image" : "Upload"
+          )}
         </button>
       </div>
 
