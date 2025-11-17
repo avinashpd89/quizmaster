@@ -47,7 +47,7 @@ const Question = (quizQuestion) => {
     const timeTaken = (endTime - quizStartTime) / 1000;
 
     try {
-      const response = await axios.post("http://44.222.203.3:3000/api/v1/validate_question", {
+      const response = await axios.post("/api/v1/validate_question", {
         userId,
         quizId,
         submittedAnswers,
@@ -77,8 +77,8 @@ const Question = (quizQuestion) => {
           questionCount: backendResult.length,
           correctAnswers: correct,
           wrongAnswers: wrong,
-          backendResult, // <-- IMPORTANT
-          questions, // still needed for question text
+          backendResult, 
+          questions, 
         },
       });
     } catch (err) {
@@ -155,11 +155,13 @@ const Question = (quizQuestion) => {
         </div>
 
         {/* Submit */}
-        <button
-          className="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-xl shadow-lg"
-          onClick={handleSubmitQuiz}>
-          Submit Quiz
-        </button>
+        <div className="flex justify-center">
+          <button
+            className="mt-6 bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-6 rounded-xl shadow-lg"
+            onClick={handleSubmitQuiz}>
+            Submit Quiz
+          </button>
+        </div>
       </div>
     </div>
   );

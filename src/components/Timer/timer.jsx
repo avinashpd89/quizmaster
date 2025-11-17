@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const Timer = ({ onComplete }) => {
-  const [time, setTime] = useState(30);
+  const [time, setTime] = useState(600);
 
   useEffect(() => {
     if (time === 0) {
