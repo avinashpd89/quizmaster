@@ -17,12 +17,12 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} /> */}
           {/* <Route
             path="/upload"
             element={authUser ? <Upload /> : <Navigate to="/signup" />}
           /> */}
-          <Route path="/upload" element={<Upload />} />
+          <Route path="/" element={<Upload />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />

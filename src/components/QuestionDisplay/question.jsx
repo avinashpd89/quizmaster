@@ -1,85 +1,107 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import Timer from "../Timer/timer.jsx";
+import axios from "axios";
 
-const Question = () => {
+const Question = (quizQuestion) => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState({});
-  const [endTime, setEndTime] = useState(null);
+  const [submittedAnswers, setSubmittedAnswer] = useState({});
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // GET FROM PREVIOUS PAGE
   const quizStartTime = location.state?.quizStartTime || new Date();
+  const { quizId, userId } = quizQuestion;
+
   const pointsPerCorrectAnswer = location.state?.pointsPerCorrectAnswer || 2;
   const pointsPerWrongAnswer = location.state?.pointsPerWrongAnswer || -1;
 
+  const optionMap = ["a", "b", "c", "d"];
+
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await axios.get("/api/questions");
-        setQuestions(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-        setLoading(false);
-      }
-    };
-    fetchQuestions();
-  }, []);
+    setQuestions(quizQuestion?.quizQuestion || []);
 
-  const handleSubmitQuiz = () => {
-    const endQuizTime = new Date();
-    setEndTime(endQuizTime);
+    const initial = {};
+    (quizQuestion?.quizQuestion || []).forEach((_, i) => {
+      initial[i + 1] = "";
+    });
+    setSubmittedAnswer(initial);
 
-    const timeTaken = (endQuizTime - quizStartTime) / 1000;
+    setLoading(false);
+  }, [quizQuestion]);
 
-    const correctAnswers = questions.filter(
-      (q, index) => selectedOptions[index] === q.answer
-    ).length;
+  // Save selected option
+  const handleOptionChange = (optionIndex) => {
+    setSubmittedAnswer({
+      ...submittedAnswers,
+      [currentQuestionIndex + 1]: optionMap[optionIndex],
+    });
+  };
 
-    const wrongAnswers = questions.length - correctAnswers;
+  // MAIN SUBMISSION FUNCTION
+  const handleSubmitQuiz = async () => {
+  const endTime = new Date();
+  const timeTaken = (endTime - quizStartTime) / 1000;
+
+  try {
+    const response = await axios.post("/api/v1/validate_question", {
+      userId,
+      quizId,
+      submittedAnswers,
+    });
+
+    const backendResult = response.data.data; 
+    // Array of: {questionNumber, isCorrect, userAnswer, correct}
+
+    let correct = 0;
+    let wrong = 0;
+
+    backendResult.forEach(item => {
+      if (item.isCorrect) correct++;
+      else wrong++;
+    });
+
     const totalScore =
-      correctAnswers * pointsPerCorrectAnswer +
-      wrongAnswers * pointsPerWrongAnswer;
+      correct * pointsPerCorrectAnswer + wrong * pointsPerWrongAnswer;
 
+    // Pass backend result to Result.jsx
     navigate("/result", {
       state: {
         score: totalScore,
         quizStartTime,
-        endTime: endQuizTime,
+        endTime,
         timeTaken,
-        questionCount: questions.length,
-        correctAnswers,
-        wrongAnswers,
-        questions, // 👈 added
-        selectedOptions, // 👈 added
+        questionCount: backendResult.length,
+        correctAnswers: correct,
+        wrongAnswers: wrong,
+        backendResult,       // <-- IMPORTANT
+        questions,            // still needed for question text
       },
     });
-  };
 
-  const handleOptionChange = (event) => {
-    setSelectedOptions({
-      ...selectedOptions,
-      [currentQuestionIndex]: event.target.value,
-    });
-  };
+  } catch (err) {
+    console.error("Error submitting quiz:", err);
+  }
+};
+
 
   if (loading)
     return (
       <div className="text-center mt-10 text-lg">Loading questions...</div>
     );
+
   if (!questions.length) return <div>No questions available.</div>;
 
   const currentQuestion = questions[currentQuestionIndex];
-  const selectedOption = selectedOptions[currentQuestionIndex] || null;
+  const selectedOption = submittedAnswers[currentQuestionIndex + 1];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-3xl bg-white/10 backdrop-blur-lg shadow-xl rounded-2xl p-6 border border-white/20">
-        {/* Timer */}
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-semibold text-white">Quiz Questions</h1>
           <div className="bg-white/20 px-4 py-2 rounded-xl text-white font-semibold">
@@ -96,29 +118,28 @@ const Question = () => {
 
         {/* Options */}
         <div className="space-y-3 mb-6">
-          {currentQuestion.options.map((option, index) => (
+          {currentQuestion.options.map((option, idx) => (
             <label
-              key={index}
+              key={idx}
               className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition 
                 ${
-                  selectedOption === option
+                  selectedOption === optionMap[idx]
                     ? "bg-blue-600 text-white border-blue-400"
                     : "bg-white/10 text-gray-200 border-white/20 hover:bg-white/20"
                 }`}>
               <input
                 type="radio"
                 name={`option-${currentQuestionIndex}`}
-                value={option}
-                checked={selectedOption === option}
-                onChange={handleOptionChange}
+                checked={selectedOption === optionMap[idx]}
+                onChange={() => handleOptionChange(idx)}
                 className="h-5 w-5 accent-blue-500"
               />
-              {option}
+              {`${optionMap[idx]}. ${option}`}
             </label>
           ))}
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation */}
         <div className="flex justify-between mt-4">
           <button
             onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
@@ -135,7 +156,7 @@ const Question = () => {
           </button>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           className="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-xl shadow-lg"
           onClick={handleSubmitQuiz}>
