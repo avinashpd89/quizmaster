@@ -43,50 +43,48 @@ const Question = (quizQuestion) => {
 
   // MAIN SUBMISSION FUNCTION
   const handleSubmitQuiz = async () => {
-  const endTime = new Date();
-  const timeTaken = (endTime - quizStartTime) / 1000;
+    const endTime = new Date();
+    const timeTaken = (endTime - quizStartTime) / 1000;
 
-  try {
-    const response = await axios.post("/api/v1/validate_question", {
-      userId,
-      quizId,
-      submittedAnswers,
-    });
+    try {
+      const response = await axios.post("http://44.222.203.3:3000/api/v1/validate_question", {
+        userId,
+        quizId,
+        submittedAnswers,
+      });
 
-    const backendResult = response.data.data; 
-    // Array of: {questionNumber, isCorrect, userAnswer, correct}
+      const backendResult = response.data.data;
+      // Array of: {questionNumber, isCorrect, userAnswer, correct}
 
-    let correct = 0;
-    let wrong = 0;
+      let correct = 0;
+      let wrong = 0;
 
-    backendResult.forEach(item => {
-      if (item.isCorrect) correct++;
-      else wrong++;
-    });
+      backendResult.forEach((item) => {
+        if (item.isCorrect) correct++;
+        else wrong++;
+      });
 
-    const totalScore =
-      correct * pointsPerCorrectAnswer + wrong * pointsPerWrongAnswer;
+      const totalScore =
+        correct * pointsPerCorrectAnswer + wrong * pointsPerWrongAnswer;
 
-    // Pass backend result to Result.jsx
-    navigate("/result", {
-      state: {
-        score: totalScore,
-        quizStartTime,
-        endTime,
-        timeTaken,
-        questionCount: backendResult.length,
-        correctAnswers: correct,
-        wrongAnswers: wrong,
-        backendResult,       // <-- IMPORTANT
-        questions,            // still needed for question text
-      },
-    });
-
-  } catch (err) {
-    console.error("Error submitting quiz:", err);
-  }
-};
-
+      // Pass backend result to Result.jsx
+      navigate("/result", {
+        state: {
+          score: totalScore,
+          quizStartTime,
+          endTime,
+          timeTaken,
+          questionCount: backendResult.length,
+          correctAnswers: correct,
+          wrongAnswers: wrong,
+          backendResult, // <-- IMPORTANT
+          questions, // still needed for question text
+        },
+      });
+    } catch (err) {
+      console.error("Error submitting quiz:", err);
+    }
+  };
 
   if (loading)
     return (
