@@ -33,7 +33,7 @@ export default function Quizly() {
       }
 
       try {
-        const response = await fetch("/api/v1/process_paragraph", {
+        const response = await fetch("http://44.222.203.3:3000/api/v1/process_paragraph", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
