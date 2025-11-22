@@ -27,19 +27,29 @@ function Signup() {
       confirmPassword: data.confirmPassword,
     };
 
-    await axios
-      .post("http://localhost:5000/api/auth/signup", userInfo)
-      .then(() => {
-        toast.success("Signup successful! Please verify your email.");
-        navigate(`/verify-email?username=${data.preferred_username}`);
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.message || "Signup failed");
-      });
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/signup",
+        userInfo
+      );
+
+      toast.success(
+        res.data.message || "Signup successful! Please verify your email."
+      );
+
+      navigate(`/verify-email?username=${data.preferred_username}`);
+    } catch (err) {
+      // Show backend error message if exists
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error("Signup failed. Please try again.");
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-6 pt-[80px]">
       {/* Glass Card */}
       <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8 relative text-white">
         {/* Close Button */}
@@ -48,7 +58,7 @@ function Signup() {
           onClick={() => {
             navigate("/");
             setTimeout(() => {
-              document.getElementById("my_modal_3").showModal();
+              document.getElementById("my_modal_3")?.showModal();
             }, 100);
           }}>
           ✕
@@ -173,7 +183,7 @@ function Signup() {
               to="/"
               onClick={() =>
                 setTimeout(() => {
-                  document.getElementById("my_modal_3").showModal();
+                  document.getElementById("my_modal_3")?.showModal();
                 }, 150)
               }
               className="text-pink-400 font-semibold hover:underline">
@@ -182,8 +192,6 @@ function Signup() {
           </p>
         </form>
       </div>
-
-      <Login />
     </div>
   );
 }

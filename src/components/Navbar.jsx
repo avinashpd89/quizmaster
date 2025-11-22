@@ -42,7 +42,10 @@ function Navbar() {
   const navItems = (
     <>
       <li>
-        <a href="/">Quizly</a>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a href="/Quizly">Quizly</a>
       </li>
       <li>
         <a
@@ -63,8 +66,9 @@ function Navbar() {
   return (
     <>
       <div
-        className={`max-w-screen-2x1 container dark:bg-black bg-neutral-100 mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50
-        }`}>
+        className={`max-w-screen-2xl container mx-auto px-4 md:px-20 fixed top-0 left-0 right-0 z-50 
+           bg-white dark:bg-black text-black dark:text-white
+           }`}>
         <div className="navbar ">
           <div className="navbar-start">
             <div className="dropdown">

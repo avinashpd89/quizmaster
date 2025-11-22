@@ -7,11 +7,12 @@ import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../context/AuthProvider";
 
 function VerifyEmail() {
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [authUser, updateAuth] = useAuth();
+  const [isResending, setIsResending] = useState(false);
 
   // Auto-fill username from URL query
   useEffect(() => {
@@ -30,7 +31,7 @@ function VerifyEmail() {
         }
       );
 
-      // Update context → updates Navbar automatically
+      // Update auth context
       updateAuth({
         ...response.data.user,
         accessToken: response.data.tokens.accessToken,
@@ -43,6 +44,24 @@ function VerifyEmail() {
       navigate("/", { replace: true });
     } catch (error) {
       toast.error(error.response?.data?.message || "Verification Failed");
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      setIsResending(true);
+      const username = watch("username");
+      if (!username) return toast.error("Username is required");
+
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/resend-code",
+        { username }
+      );
+      toast.success(response.data.message || "Code resent successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to resend code");
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -61,6 +80,7 @@ function VerifyEmail() {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Username */}
           <div className="flex flex-col">
             <label className="text-white font-medium mb-1">Username</label>
             <input
@@ -71,16 +91,7 @@ function VerifyEmail() {
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-white font-medium mb-1">Verification Code</label>
-            <input
-              type="text"
-              {...register("code", { required: true })}
-              placeholder="Enter OTP from email"
-              className="px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white placeholder-white border border-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
-
+          {/* Password */}
           <div className="flex flex-col relative">
             <label className="text-white font-medium mb-1">Password</label>
             <input
@@ -98,6 +109,35 @@ function VerifyEmail() {
             </button>
           </div>
 
+          {/* OTP */}
+          <div className="flex flex-col">
+            <label className="text-white font-medium mb-1">Verification Code</label>
+            <input
+              type="text"
+              {...register("code", { required: true })}
+              placeholder="Enter OTP from email"
+              className="px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white placeholder-white border border-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            />
+          </div>
+
+          {/* Resend Code */}
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-white text-sm opacity-80">
+              Didn't receive the code?
+            </span>
+            <button
+              type="button"
+              onClick={handleResendCode}
+              disabled={isResending}
+              className={`text-sm font-medium underline text-purple-200 hover:text-white transition ${
+                isResending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {isResending ? "Resending..." : "Resend Code"}
+            </button>
+          </div>
+
+          {/* Submit */}
           <button
             type="submit"
             className="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-purple-700 text-white font-semibold shadow-lg hover:scale-105 transform transition"

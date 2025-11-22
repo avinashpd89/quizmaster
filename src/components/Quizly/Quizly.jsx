@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Question from "../QuestionDisplay/question";
+import { useAuth } from "../../context/AuthProvider.jsx";
 
 export default function Quizly() {
   const [uploadType, setUploadType] = useState("paragraph");
@@ -15,17 +16,16 @@ export default function Quizly() {
   const [quizId, setQuizId] = useState("");
   const [userId, setUserId] = useState("");
   const [passCriteria, setPassCriteria] = useState("60");
+  const [authUser] = useAuth();
 
   const navigate = useNavigate();
-  const defaultUserId = "FrontendTestUser";
+
   // ============================
   // 🚀 Upload Handler
   // ============================
+
   const handleUpload = async () => {
     setIsLoading(true);
-
-    // Artificial 3 sec delay
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // -------- Paragraph Upload --------
     if (uploadType === "paragraph") {
@@ -40,15 +40,15 @@ export default function Quizly() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             paragraph,
-            authenticated_user: true,
-            userId: defaultUserId,
+            authenticated_user: !!authUser,
+            userId: authUser?.username,
           }),
         });
 
         const data = await response.json();
         setQuizQuestion(data?.data?.Item?.questions || []);
         setQuizId(data?.data?.Item?.quizId || "");
-        setUserId(defaultUserId);
+        setUserId(authUser?.username);
 
         if (!response.ok) {
           setIsLoading(false);
@@ -78,10 +78,17 @@ export default function Quizly() {
         const response = await fetch("/api/upload-url", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({
+            url,
+            authenticated_user: !!authUser,
+            userId: authUser?.username,
+          }),
         });
 
         const data = await response.json();
+        setQuizQuestion(data?.data?.Item?.questions || []);
+        setQuizId(data?.data?.Item?.quizId || "");
+        setUserId(authUser?.username);
 
         if (!response.ok) {
           setIsLoading(false);
@@ -89,8 +96,6 @@ export default function Quizly() {
         }
 
         toast.success("URL uploaded & saved to DB!");
-
-        // Clear input
         setUrl("");
         setIsUploaded(true);
       } catch (error) {
@@ -110,6 +115,8 @@ export default function Quizly() {
 
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("authenticated_user", !!authUser);
+      formData.append("userId", authUser?.username);
 
       try {
         const response = await fetch("/api/upload-image", {
@@ -118,6 +125,9 @@ export default function Quizly() {
         });
 
         const data = await response.json();
+        setQuizQuestion(data?.data?.Item?.questions || []);
+        setQuizId(data?.data?.Item?.quizId || "");
+        setUserId(authUser?.username);
 
         if (!response.ok) {
           setIsLoading(false);
@@ -125,8 +135,6 @@ export default function Quizly() {
         }
 
         toast.success(`Image uploaded: ${data.fileName}`);
-
-        // Clear input
         setFile(null);
         setIsUploaded(true);
       } catch (error) {
@@ -138,9 +146,6 @@ export default function Quizly() {
   };
 
   const handleStartQuiz = () => {
-    // navigate("/question", {
-    //   state: { quizStartTime: new Date() },
-    // });
     setQuizStarted(true);
   };
 
@@ -148,7 +153,7 @@ export default function Quizly() {
     <div>
       {!quizStarted ? (
         <>
-          <div className="w-full flex flex-col items-center p-6 space-y-6">
+          <div className="w-full flex flex-col mt-[4rem] items-center p-6 space-y-6">
             <h1 className="text-2xl font-semibold text-gray-300">
               Generate AI powered practice paper sets with quality questions
               based on your uploaded content.
@@ -174,7 +179,7 @@ export default function Quizly() {
             </div>
 
             {/* Input Section */}
-            <div className="w-full max-w-lg bg-white shadow-md rounded-xl p-6 space-y-4">
+            <div className="w-full max-w-lg bg-gray-950 shadow-md rounded-xl p-6 space-y-4">
               {uploadType === "paragraph" && (
                 <textarea
                   className="w-full border rounded-lg p-3 h-32 focus:ring focus:ring-blue-300"
@@ -197,7 +202,7 @@ export default function Quizly() {
               {uploadType === "image" && (
                 <input
                   type="file"
-                  className="w-full bg-gray-100 rounded-lg p-3"
+                  className="w-full bg-gray-500 rounded-lg p-3"
                   accept="image/*"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
